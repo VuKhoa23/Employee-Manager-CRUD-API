@@ -3,10 +3,7 @@ package com.vukhoa23.crud_employees_manager.rest;
 import com.vukhoa23.crud_employees_manager.entity.Employee;
 import com.vukhoa23.crud_employees_manager.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -34,5 +31,36 @@ public class MyRestController {
         return employee;
     }
 
-    // add mapping for adding a employee
+    // add mapping for adding an employee
+    @PostMapping("/employees")
+    public Employee addEmployee(@RequestBody Employee employee){
+        // in case the user add id in the json, set the id to zero
+        // setting the id to zero force the employee to be added not to be updated
+        employee.setId(0);
+        Employee saved = employeeService.save(employee);
+        // return the saved employee which has a updated ID
+        return saved;
+    }
+
+    // add mapping for update an employee
+    @PutMapping("/employees")
+    public Employee updateEmployee(@RequestBody Employee employee){
+        Employee updated = employeeService.save(employee);
+        // return updated employee
+        return updated;
+    }
+
+    // add mapping for deleting a employee
+    @DeleteMapping("/employees/{employeeId}")
+    public String deleteEmployee(@PathVariable int employeeId){
+        Employee toBeRemoved = employeeService.findById(employeeId);
+
+        if(toBeRemoved == null){
+            throw new RuntimeException("Employee doesn't exists");
+        }
+
+        employeeService.deleteById(employeeId);
+
+        return "Deleted employee with id " + employeeId;
+    }
 }
